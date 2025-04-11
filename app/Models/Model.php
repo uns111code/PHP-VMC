@@ -191,25 +191,28 @@ abstract class Model extends Database
 
     public function fetchHydrate(mixed $query): array|static|bool
     {
-        var_dump($query);
+        // on verifie si $query est un tableau et qu'il contient au moins un élément
+        if (is_array($query) && count($query) > 0) {
+            // Boucle sur le tableau de résultats pour instancier chaque objet
 
-        if (is_array($query) && count($query) > 0)
-        {
-            // on boucle sur le tableau de resultat pour instancier chaque objet
-
-            $data = array_map(
-                fn($object) => (new static())->hydrate($object),
-            )
+            // Méthode array_map
+            // $data = array_map(
+            //     fn(object $object) => (new static())->hydrate($object),
+            //     $query
+            // );
 
             // foreach
             $data = [];
-            foreach ($query as object) {
-                // on instancie un objet de la classe et on hydrate
-                $data[] = (new static()) ->hydrate($query);
+
+            foreach ($query as $object) {
+                $data[] = (new static())->hydrate($object);
             }
+
+            return $data;
+            // on verifie si $query est un objet
         } else if (!empty($query)) {
-            // on un objet standard dans $query  -> on instancie un objet de la classe et on hydrate
-            return (new static()) ->hydrate($query);
+            // On a un objet standard dans $query -> on instancie un objet de la classe et on hydrate
+            return (new static())->hydrate($query);
         } else {
             return $query;
         }
